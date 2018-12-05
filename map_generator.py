@@ -3,22 +3,38 @@ import requests
 import json
 
 
+def load_api_key():
+    with open("api_key") as api_key_file:
+        line = api_key_file.readline()
+    return "&key=" + line
+
+
+def build_request_string(list_of_coordinates):
+    return ''.join([str(lat) + ',' + str(lng) + '|' for lat, lng in list_of_coordinates])[:-1]
+
+
+def build_list_of_coordinates(start_lat, start_lng, end_lat, end_lng, resolution):
+    coordinates = []
+    if start_lat < end_lat:
+        resolution_lat = resolution
+    else:
+        resolution_lat = -resolution
+    if start_lng < end_lng:
+        resolution_lng = resolution
+    else:
+        resolution_lng = -resolution
+    # Todo: Optimize
+    for lat in np.arange(start_lat, end_lat, resolution_lat):
+        for lng in np.arange(start_lng, end_lng, resolution_lng):
+            coordinates.append((lat, lng))
+    print("Created list of " + str(len(coordinates)) + " coordinates")
+    return coordinates
+
+
 def send_request(request):
-    # response = requests.get()
-    # response_json = json.loads(response.content)
-    response_json = {
-        "0": {'altitude': 100, 'datetime': 1543665867, 'latitude': 40.71, 'longitude': -74.0, 'passes': 5},
-        "1": {'altitude': 100, 'datetime': 1543665867, 'latitude': 40.71, 'longitude': -75.0, 'passes': 5},
-        "2": {'altitude': 100, 'datetime': 1543665867, 'latitude': 40.71, 'longitude': -76.0, 'passes': 5},
-
-        "3": {'altitude': 110, 'datetime': 1543665867, 'latitude': 41.71, 'longitude': -74.0, 'passes': 5},
-        "4": {'altitude': 110, 'datetime': 1543665867, 'latitude': 41.71, 'longitude': -75.0, 'passes': 5},
-        "5": {'altitude': 110, 'datetime': 1543665867, 'latitude': 41.71, 'longitude': -76.0, 'passes': 5},
-
-        "6": {'altitude': 120, 'datetime': 1543665867, 'latitude': 42.71, 'longitude': -74.0, 'passes': 5},
-        "7": {'altitude': 120, 'datetime': 1543665867, 'latitude': 42.71, 'longitude': -75.0, 'passes': 5},
-        "8": {'altitude': 120, 'datetime': 1543665867, 'latitude': 42.71, 'longitude': -76.0, 'passes': 5}
-    }
+    print("Sending request:\t" + request)
+    response = requests.get(request)
+    response_json = json.loads(response.content)
     return response_json
 
 
