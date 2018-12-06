@@ -42,19 +42,19 @@ def get_positions_dict(response_json):
     positions = {
         "latitude": [],
         "longitude": [],
-        "altitude": []
+        "elevation": []
     }
 
-    for position in response_json.values():
-        positions['latitude'].append(position['latitude'])
-        positions['longitude'].append(position['longitude'])
-        positions['altitude'].append(position['altitude'])
+    for position in response_json['results']:
+        positions['latitude'].append(position['location']['lat'])
+        positions['longitude'].append(position['location']['lng'])
+        positions['elevation'].append(position['elevation'])
     return positions
 
 
 def generate_map(positions):
     map_array = np.array((positions['latitude'],
                           positions['longitude'],
-                          positions['altitude']
+                          positions['elevation']
                           ))
     return map_array
