@@ -10,7 +10,7 @@ def load_api_key():
 
 
 def build_request_string(list_of_coordinates):
-    return ''.join([str(lat) + ',' + str(lng) + '|' for lat, lng in list_of_coordinates])[:-1]
+    return ''.join([str(lat) + """,""" + str(lng) + """|""" for lat, lng in list_of_coordinates])[:-2]
 
 
 def build_list_of_coordinates(start_lat, start_lng, end_lat, end_lng, resolution):
@@ -46,8 +46,8 @@ def get_positions_dict(response_json):
     }
 
     for position in response_json['results']:
-        positions['latitude'].append(position['location']['lat'])
-        positions['longitude'].append(position['location']['lng'])
+        positions['latitude'].append(position['latitude'])
+        positions['longitude'].append(position['longitude'])
         positions['elevation'].append(position['elevation'])
     return positions
 
