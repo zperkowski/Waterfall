@@ -13,6 +13,12 @@ def build_request_string(list_of_coordinates):
     return ''.join([str(lat) + """,""" + str(lng) + """|""" for lat, lng in list_of_coordinates])[:-1]
 
 
+def load_request_from_file(path):
+    with open(path) as file:
+        response = json.load(file)
+    return response
+
+
 def build_list_of_coordinates(start_lat, start_lng, end_lat, end_lng, resolution):
     coordinates = []
     if start_lat < end_lat:
