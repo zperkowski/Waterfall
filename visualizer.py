@@ -3,11 +3,16 @@ from matplotlib import cm
 from matplotlib import pyplot as plt
 from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D
+from tqdm import tqdm
 
 fig = plt.figure()
 ax = Axes3D(fig)
 
 surf = None
+frames = 60
+fps = 30
+# Todo: Find why this total time works only with values 60 frames and 30 fps
+progress_bar = tqdm(total=frames*fps+fps)
 
 
 def init():
@@ -17,6 +22,7 @@ def init():
 
 
 def animate(i):
+    progress_bar.update(i+1)
     ax.view_init(elev=20., azim=i)
     return fig,
 
@@ -29,10 +35,6 @@ def save_animation(map_array, name):
     surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.jet, linewidth=1, antialiased=True)
     # Animate
     anim = animation.FuncAnimation(fig, animate, init_func=init,
-                                   frames=360, interval=20, blit=True)
+                                   frames=frames, interval=20, blit=True)
     # Save
-    anim.save(name, fps=30, extra_args=['-vcodec', 'libx264'])
-
-
-if __name__ == '__main__':
-    save_animation('animation.mp4')
+    anim.save(name, fps=fps, extra_args=['-vcodec', 'libx264'])
