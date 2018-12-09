@@ -10,7 +10,7 @@ def load_api_key():
 
 
 def build_request_string(list_of_coordinates):
-    return ''.join([str(lat) + ',' + str(lng) + '|' for lat, lng in list_of_coordinates])[:-1]
+    return ''.join([str(lat) + """,""" + str(lng) + """|""" for lat, lng in list_of_coordinates])[:-1]
 
 
 def build_list_of_coordinates(start_lat, start_lng, end_lat, end_lng, resolution):
@@ -38,7 +38,22 @@ def send_request(request):
     return response_json
 
 
-def get_positions_dict(response_json):
+
+def get_osm_positions_dict(response_json):
+    positions = {
+        "latitude": [],
+        "longitude": [],
+        "elevation": []
+    }
+
+    for position in response_json['results']:
+        positions['latitude'].append(position['latitude'])
+        positions['longitude'].append(position['longitude'])
+        positions['elevation'].append(position['elevation'])
+    return positions
+
+
+def get_google_positions_dict(response_json):
     positions = {
         "latitude": [],
         "longitude": [],
