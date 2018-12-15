@@ -31,7 +31,8 @@ def save_animation(map_array, name):
     global X, Y, Z, surf
     X, Y, Z = map_array
     bottom = np.zeros(len(Z))
-    width = depth = np.ones(len(Z))
+    # Todo: Find proper values
+    width = depth = np.array(0.002*len(Z))
 
     ax.bar3d(X, Y, bottom, width, depth, Z)
     plt.show()

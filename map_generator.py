@@ -44,7 +44,6 @@ def send_request(request):
     return response_json
 
 
-
 def get_osm_positions_dict(response_json):
     positions = {
         "latitude": [],
@@ -79,3 +78,31 @@ def generate_map(positions):
                           positions['elevation']
                           ))
     return map_array
+
+
+def request_google_api():
+    request = "https://maps.googleapis.com/maps/api/elevation/json?locations="
+
+    coordinates = build_request_string(
+        build_list_of_coordinates(54.75, 13.80, 48.65, 24.52, 0.5))
+    request += coordinates
+
+    # Key for Google API
+    api_key = load_api_key()
+    request += api_key
+    response = send_request(request)
+    return response
+
+
+def request_osm_api():
+    request = "https://api.open-elevation.com/api/v1/lookup?locations="
+
+    coordinates = build_request_string(
+        build_list_of_coordinates(54.75, 13.80, 48.65, 24.52, 0.5))
+    request += coordinates
+
+    # Key for Google API
+    api_key = load_api_key()
+    request += api_key
+    response = send_request(request)
+    return response
