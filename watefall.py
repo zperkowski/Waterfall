@@ -1,5 +1,6 @@
 import visualizer
 import map_generator
+import subprocess
 
 if __name__ == '__main__':
     # response = map_generator.request_osm_api()
