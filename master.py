@@ -30,9 +30,10 @@ def start(list_water_maps):
     water_map = filter_only_water(list_water_maps[-1])
 
     comm.bcast(water_map, root=MPI.ROOT)
-    new_map = comm.gather(water_map, root=MPI.ROOT)
-    print('master:', new_map)
-    list_water_maps.append(new_map)
+    new_maps = comm.gather(water_map, root=MPI.ROOT)
+    print('master:', new_maps)
+    for new_map in new_maps[0]:
+        list_water_maps.append(new_map)
 
     comm.Disconnect()
 
