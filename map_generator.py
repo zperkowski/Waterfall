@@ -98,7 +98,7 @@ def request_osm_api():
     request = "https://api.open-elevation.com/api/v1/lookup?locations="
 
     coordinates = build_request_string(
-        build_list_of_coordinates(54.75, 13.80, 48.65, 24.52, 0.5))
+        build_list_of_coordinates(55, 10, 45, 20, 1))
     request += coordinates
 
     # Key for Google API
