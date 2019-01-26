@@ -28,6 +28,11 @@ def pour_water(to_column, from_column, divider, water_map):
 
 
 def chunks(list_to_split, n):
-    """Yield successive n-sized chunks from l."""
-    for i in range(0, len(list_to_split), n):
-        yield list_to_split[i:i + n]
+    avg = len(list_to_split) / float(n)
+    out = []
+    last = 0.0
+
+    while last < len(list_to_split):
+        out.append(list_to_split[int(last):int(last + avg)])
+        last += avg
+    return out
