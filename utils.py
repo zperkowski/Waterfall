@@ -23,7 +23,7 @@ def find_neighbouring_tiles(water_position, water_map):
 def pour_water(to_column, from_column, divider, water_map):
     amount = (water_map[3][from_column] - water_map[2][from_column]) / divider
     water_map[3][from_column] = water_map[3][from_column] - amount
-    water_map[3][to_column] = water_map[3][to_column] + amount
+    water_map[3][to_column] = water_map[2][to_column] + water_map[3][to_column] + amount
     return water_map
 
 

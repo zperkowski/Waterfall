@@ -4,7 +4,7 @@ import sys
 import numpy as np
 from mpi4py import MPI
 
-from utils import filter_only_water, find_column, pour_water, find_neighbouring_tiles
+from utils import filter_only_water, find_column, pour_water, find_neighbouring_tiles, chunks
 
 
 # Splits work between workers and joins results to visualize them
@@ -27,14 +27,32 @@ def start(list_water_maps):
     N = np.array(NUM_OF_WORKERS)
     comm.Bcast([N, MPI.INT], root=MPI.ROOT)
 
-    water_map = filter_only_water(list_water_maps[-1])
+    water_map = list_water_maps[-1]
 
     comm.bcast(water_map, root=MPI.ROOT)
-    new_maps = comm.gather(water_map, root=MPI.ROOT)
-    print('master:', new_maps)
-    for new_map in new_maps[0]:
+    # new_map = comm.gather(new_maps, root=MPI.ROOT)
+    new_maps = worker(water_map)
+    for new_map in new_maps:
         list_water_maps.append(new_map)
 
     comm.Disconnect()
 
     return list_water_maps
+
+
+def worker(water_map):
+    # Find places where water is and split work between workers
+    filtered_water_map = filter_only_water(water_map)
+    split_filtered_water_map = chunks(filtered_water_map, 1)
+    filtered_water_map = split_filtered_water_map[0]
+
+    l_water = []
+
+    # Pour water on neighbouring tiles
+    for water_position in filtered_water_map:
+        neighbouring_tiles = find_neighbouring_tiles(water_position, water_map)
+        from_column = find_column(filtered_water_map, water_position[0], water_position[1])
+        for tile in neighbouring_tiles:
+            water_map = pour_water(tile, from_column, len(neighbouring_tiles), water_map)
+            l_water.append(water_map)
+    return l_water
