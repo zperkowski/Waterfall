@@ -14,7 +14,7 @@ def start(list_water_maps):
     neighbouring_tiles = find_neighbouring_tiles(water_position, list_water_maps[-1])
     for tile in neighbouring_tiles:
         from_column = find_column(list_water_maps[-1], water_position[0], water_position[1])
-        list_water_maps.append(pour_water(tile, from_column, len(neighbouring_tiles), list_water_maps[-1]))
+        list_water_maps.append(pour_water(tile, from_column, list_water_maps[-1]))
 
     # for i in range(10):
     NUM_OF_WORKERS = 1
@@ -30,10 +30,11 @@ def start(list_water_maps):
     water_map = list_water_maps[-1]
 
     comm.bcast(water_map, root=MPI.ROOT)
-    # new_map = comm.gather(new_maps, root=MPI.ROOT)
-    new_maps = worker(water_map)
-    for new_map in new_maps:
-        list_water_maps.append(new_map)
+    wl_water = []
+    wl_water = comm.gather(wl_water, root=MPI.ROOT)
+    for l_water in wl_water:
+        for water in l_water:
+            list_water_maps.append(water)
 
     comm.Disconnect()
 
@@ -46,13 +47,14 @@ def worker(water_map):
     split_filtered_water_map = chunks(filtered_water_map, 1)
     filtered_water_map = split_filtered_water_map[0]
 
-    l_water = []
+    l_water = [water_map]
 
     # Pour water on neighbouring tiles
-    for water_position in filtered_water_map:
+    for i in range(len(filtered_water_map[0])):
+        water_position = filtered_water_map[:, i]
         neighbouring_tiles = find_neighbouring_tiles(water_position, water_map)
-        from_column = find_column(filtered_water_map, water_position[0], water_position[1])
+        from_column = find_column(l_water[-1], water_position[0], water_position[1])
         for tile in neighbouring_tiles:
-            water_map = pour_water(tile, from_column, len(neighbouring_tiles), water_map)
+            water_map = pour_water(tile, from_column, water_map)
             l_water.append(water_map)
     return l_water

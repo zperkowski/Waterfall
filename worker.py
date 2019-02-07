@@ -22,14 +22,15 @@ filtered_water_map = filter_only_water(water_map)
 split_filtered_water_map = chunks(filtered_water_map, N)
 filtered_water_map = split_filtered_water_map[rank]
 
-l_water = []
+l_water = [water_map]
 
 # Pour water on neighbouring tiles
-for water_position in filtered_water_map:
+for i in range(len(filtered_water_map[0])):
+    water_position = filtered_water_map[:, i]
     neighbouring_tiles = find_neighbouring_tiles(water_position, water_map)
-    from_column = find_column(filtered_water_map, water_position[0], water_position[1])
+    from_column = find_column(l_water[-1], water_position[0], water_position[1])
     for tile in neighbouring_tiles:
-        water_map = pour_water(tile, from_column, len(neighbouring_tiles), water_map)
+        water_map = pour_water(tile, from_column, water_map)
         l_water.append(water_map)
 
 # Workers send modified map back to master

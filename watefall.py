@@ -13,7 +13,7 @@ def generate_initial_waterfall(x, y, amount, map):
 
     # Add new dimension for water level
     initial_state = np.vstack([initial_state, np.zeros(len(initial_state[0]))])
-    initial_state[3, position] = initial_state[2, position] + amount
+    initial_state[3, position] = amount
 
     list_of_water_states.append(initial_state)
     return list_of_water_states
