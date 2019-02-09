@@ -20,6 +20,7 @@ def generate_initial_waterfall(x, y, amount, map):
 
 
 if __name__ == '__main__':
+    # mpirun -hostfile hostfile -np 1 python watefall.py
     # response = map_generator.request_osm_api()
     response = map_generator.load_request_from_file("samples/poland_s.json")
     print(str(response))

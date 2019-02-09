@@ -13,10 +13,13 @@ def filter_only_water(map):
 
 def find_neighbouring_tiles(water_position, water_map):
     neighbouring_tiles = []
-    neighbouring_tiles.append(find_column(water_map, water_position[0] - 1, water_position[1] - 1))
-    neighbouring_tiles.append(find_column(water_map, water_position[0] - 1, water_position[1] + 1))
-    neighbouring_tiles.append(find_column(water_map, water_position[0] + 1, water_position[1] - 1))
-    neighbouring_tiles.append(find_column(water_map, water_position[0] + 1, water_position[1] + 1))
+    try:
+        neighbouring_tiles.append(find_column(water_map, water_position[0] - 1, water_position[1] - 1))
+        neighbouring_tiles.append(find_column(water_map, water_position[0] - 1, water_position[1] + 1))
+        neighbouring_tiles.append(find_column(water_map, water_position[0] + 1, water_position[1] - 1))
+        neighbouring_tiles.append(find_column(water_map, water_position[0] + 1, water_position[1] + 1))
+    except IndexError:
+        return []
     return neighbouring_tiles
 
 
@@ -26,7 +29,8 @@ def pour_water(to_column, from_column, water_map):
             and water_map[3][from_column] > 0:
         water_map[3][from_column] = water_map[3][from_column] - amount
         water_map[3][to_column] = water_map[3][to_column] + amount
-    return water_map
+        return water_map, True
+    return water_map, False
 
 
 def chunks(list_to_split, n):

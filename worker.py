@@ -23,17 +23,35 @@ split_filtered_water_map = chunks(filtered_water_map, N)
 filtered_water_map = split_filtered_water_map[rank]
 
 l_water = [water_map]
+changed_tiles = {}
 
 # Pour water on neighbouring tiles
-for i in range(len(filtered_water_map[0])):
-    water_position = filtered_water_map[:, i]
-    neighbouring_tiles = find_neighbouring_tiles(water_position, water_map)
-    from_column = find_column(l_water[-1], water_position[0], water_position[1])
-    for tile in neighbouring_tiles:
-        water_map = pour_water(tile, from_column, water_map)
-        l_water.append(water_map)
+for i in range(10000):
+    for i in range(len(filtered_water_map[0])):
+        water_position = filtered_water_map[:, i]
+        neighbouring_tiles = find_neighbouring_tiles(water_position, water_map)
+        if len(neighbouring_tiles):
+            from_column = find_column(l_water[-1], water_position[0], water_position[1])
+            if len(from_column) == 0:
+                break
+            from_column = from_column[0]
+            for tile in neighbouring_tiles:
+                if len(tile) > 0:
+                    tile = tile[0]
+                    water_map, is_map_changed = pour_water(tile, from_column, water_map)
+                    if is_map_changed:
+                        if from_column in changed_tiles.keys():
+                            changed_tiles[from_column] -= 1
+                        else:
+                            changed_tiles[from_column] = -1
+                        if tile in changed_tiles.keys():
+                            changed_tiles[tile] += 1
+                        else:
+                            changed_tiles[tile] = 1
+                    l_water.append(water_map)
 
 # Workers send modified map back to master
 comm.gather(l_water, root=0)
+comm.gather(changed_tiles, root=0)
 
 comm.Disconnect()
